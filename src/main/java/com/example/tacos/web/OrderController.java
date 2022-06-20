@@ -2,6 +2,7 @@ package com.example.tacos.web;
 
 
 import com.example.tacos.TacoOrder;
+import com.example.tacos.data.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -18,6 +19,11 @@ import javax.validation.Valid;
 @RequestMapping("/orders")
 @SessionAttributes("tacoOrder") // tacoOrder should be kept in the session
 public class OrderController {
+    private OrderRepository orderRepo;
+    public OrderController(OrderRepository orderRepo) {
+        this.orderRepo = orderRepo;
+    }
+
     @GetMapping("/current")
     public String orderForm() {
         return "orderForm";
@@ -27,7 +33,7 @@ public class OrderController {
     public String processOrder(@Valid TacoOrder order, Errors errors, SessionStatus sessionStatus) {
         if(errors.hasErrors())
             return "orderForm";
-        log.info("Order submitted: {}", order);
+        orderRepo.save(order);
         sessionStatus.setComplete(); // the setComplete methode of session status clean the session
         return "redirect:/";
     }
