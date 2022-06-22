@@ -2,9 +2,9 @@ package com.example.tacos;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.CreditCardNumber;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -14,10 +14,11 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Table
+@Entity
 public class TacoOrder implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Date placedAt;
 
@@ -38,6 +39,7 @@ public class TacoOrder implements Serializable {
     private String ccExpiration;
     @Digits(integer=3, fraction=0, message="Invalid CVV") // fraction indicates numbers after ,
     private String ccCVV;
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Taco> tacos = new ArrayList<>();
     public void addTaco(Taco taco) {
         this.tacos.add(taco);
